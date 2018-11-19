@@ -2,8 +2,8 @@ import pandas as pd
 import sys
 
 ### COMMON TO HYPERGRAPH AND SIMPLE GRAPH
-def makeDefs(DEFS, opts={}):
-    defs = {key: opts[key] if key in opts else DEFS[key] for key in DEFS}    
+def _makeDefs(DEFS, opts={}):
+    defs = { key: opts[key] if key in opts else DEFS[key] for key in DEFS }
     base_skip = opts['SKIP'] if 'SKIP' in opts else defs['SKIP']
     skip = [x for x in base_skip] #copy
     defs['SKIP'] = skip
@@ -12,15 +12,16 @@ def makeDefs(DEFS, opts={}):
             skip.append(defs[key])
     return defs
 
-def screen_entities(events, entity_types, defs):
+def _screen_entities(events, entity_types, defs):
     base = entity_types if not entity_types == None else events.columns
     return [x for x in base if not x in defs['SKIP']]
 
 
-def col2cat(cat_lookup, col):
+def _col2cat(cat_lookup, col):
     return cat_lookup[col] if col in cat_lookup else col
 
-def make_reverse_lookup(categories):
+
+def _make_reverse_lookup(categories):
     lookup = {}
     for category in categories:
         for col in categories[category]:
@@ -28,9 +29,8 @@ def make_reverse_lookup(categories):
     return lookup
 
 
-
-def valToSafeStr (v): 
-    if sys.version_info < (3,0):        
+def _valToSafeStr(v):
+    if sys.version_info < (3,0):
         t = type(v)
         if t is unicode: # noqa: F821
             return v
@@ -43,21 +43,21 @@ def valToSafeStr (v):
         if t is str:
             return v
         else:
-            return repr(v)        
+            return repr(v)
 
 
-#ex output: pd.DataFrame([{'val::state': 'CA', 'nodeType': 'state', 'nodeID': 'state::CA'}])
-def format_entities(events, entity_types, defs, drop_na):
-    cat_lookup = make_reverse_lookup(defs['CATEGORIES'])
+# ex output: pd.DataFrame([{'val::state': 'CA', 'nodeType': 'state', 'nodeID': 'state::CA'}])
+def _format_entities(events, entity_types, defs, drop_na):
+    cat_lookup = _make_reverse_lookup(defs['CATEGORIES'])
     lst = sum([[{
                     col: v,
                     defs['TITLE']: v,
-                    defs['NODETYPE']: col, 
-                    defs['NODEID']: col2cat(cat_lookup, col) + defs['DELIM'] + valToSafeStr(v)
-                } 
-                for v in events[col].unique() if not drop_na or valToSafeStr(v) != 'nan'] for col in entity_types], [])
+                    defs['NODETYPE']: col,
+                    defs['NODEID']: _col2cat(cat_lookup, col) + defs['DELIM'] + _valToSafeStr(v)
+                }
+                for v in events[col].unique() if not drop_na or _valToSafeStr(v) != 'nan'] for col in entity_types], [])
     df = pd.DataFrame(lst)
-    df[defs['CATEGORY']] = df[defs['NODETYPE']].apply(lambda col: col2cat(cat_lookup, col))
+    df[defs['CATEGORY']] = df[defs['NODETYPE']].apply(lambda col: _col2cat(cat_lookup, col))
     return df
 
 DEFS_HYPER = {
@@ -75,10 +75,10 @@ DEFS_HYPER = {
 
 
 
-#ex output: pd.DataFrame([{'edgeType': 'state', 'attribID': 'state::CA', 'eventID': 'eventID::0'}])
-def format_hyperedges(events, entity_types, defs, drop_na, drop_edge_attrs):
+# ex output: pd.DataFrame([{'edgeType': 'state', 'attribID': 'state::CA', 'eventID': 'eventID::0'}])
+def _format_hyperedges(events, entity_types, defs, drop_na, drop_edge_attrs):
     is_using_categories = len(defs['CATEGORIES'].keys()) > 0
-    cat_lookup = make_reverse_lookup(defs['CATEGORIES'])
+    cat_lookup = _make_reverse_lookup(defs['CATEGORIES'])
 
     subframes = []
     for col in sorted(entity_types):
@@ -87,21 +87,21 @@ def format_hyperedges(events, entity_types, defs, drop_na, drop_edge_attrs):
         if drop_na:
             raw = raw.dropna()
         raw = raw.copy()
-        if len(raw):            
+        if len(raw):
             if is_using_categories:
-                raw[defs['EDGETYPE']] = raw.apply(lambda r: col2cat(cat_lookup, col), axis=1)
+                raw[defs['EDGETYPE']] = raw.apply(lambda r: _col2cat(cat_lookup, col), axis=1)
                 raw[defs['CATEGORY']] = raw.apply(lambda r: col, axis=1)
             else:
                 raw[defs['EDGETYPE']] = raw.apply(lambda r: col, axis=1)
-            raw[defs['ATTRIBID']] = raw.apply(lambda r: col2cat(cat_lookup, col) + defs['DELIM'] + valToSafeStr(r[col]), axis=1)
+            raw[defs['ATTRIBID']] = raw.apply(lambda r: _col2cat(cat_lookup, col) + defs['DELIM'] + _valToSafeStr(r[col]), axis=1)
             if drop_edge_attrs:
                 raw = raw.drop([col], axis=1)
             subframes.append(raw)
 
     if len(subframes):
         result_cols = list(set(
-            ([x for x in events.columns.tolist() if not x == defs['NODETYPE']] 
-                if not drop_edge_attrs 
+            ([x for x in events.columns.tolist() if not x == defs['NODETYPE']]
+                if not drop_edge_attrs
                 else [])
             + [defs['EDGETYPE'], defs['ATTRIBID'], defs['EVENTID']]
             + ([defs['CATEGORY']] if is_using_categories else []) ))
@@ -114,8 +114,8 @@ def format_hypernodes(events, defs, drop_na):
     event_nodes = events.copy()
     event_nodes[defs['NODETYPE']] = defs['EVENTID']
     event_nodes[defs['CATEGORY']] = 'event'
-    event_nodes[defs['NODEID']] = event_nodes[defs['EVENTID']]    
-    event_nodes[defs['TITLE']] = event_nodes[defs['EVENTID']]    
+    event_nodes[defs['NODEID']] = event_nodes[defs['EVENTID']]
+    event_nodes[defs['TITLE']] = event_nodes[defs['EVENTID']]
     return event_nodes
 
 def hyperbinding(g, defs, entities, event_entities, edges):
@@ -128,29 +128,29 @@ def hyperbinding(g, defs, entities, event_entities, edges):
         'graph': g\
             .bind(source=defs['ATTRIBID'], destination=defs['EVENTID']).edges(edges)\
             .bind(node=defs['NODEID'], point_title=defs['TITLE']).nodes(nodes)
-    }    
+    }
 
-###########        
+###########
 
-class Hypergraph(object):        
+class Hypergraph(object):
 
     @staticmethod
     def hypergraph(g, raw_events, entity_types=None, opts={}, drop_na=True, drop_edge_attrs=False, verbose=True):
-        defs = makeDefs(DEFS_HYPER, opts)
-        entity_types = screen_entities(raw_events, entity_types, defs)
+        defs = _makeDefs(DEFS_HYPER, opts)
+        entity_types = _screen_entities(raw_events, entity_types, defs)
         events = raw_events.copy().reset_index(drop=True)
         if defs['EVENTID'] in events.columns:
             events[defs['EVENTID']] = events.apply(
-                lambda r: defs['EVENTID'] + defs['DELIM'] + valToSafeStr(r[defs['EVENTID']]), 
+                lambda r: defs['EVENTID'] + defs['DELIM'] + _valToSafeStr(r[defs['EVENTID']]),
                 axis=1)
         else:
             events[defs['EVENTID']] = events.reset_index().apply(
-                lambda r: defs['EVENTID'] + defs['DELIM'] + valToSafeStr(r['index']),
+                lambda r: defs['EVENTID'] + defs['DELIM'] + _valToSafeStr(r['index']),
                 axis=1)
         events[defs['NODETYPE']] = 'event'
-        entities = format_entities(events, entity_types, defs, drop_na)
+        entities = _format_entities(events, entity_types, defs, drop_na)
         event_entities = format_hypernodes(events, defs, drop_na)
-        edges = format_hyperedges(events, entity_types, defs, drop_na, drop_edge_attrs)
+        edges = _format_hyperedges(events, entity_types, defs, drop_na, drop_edge_attrs)
         if verbose:
             print('# links', len(edges))
             print('# event entities', len(events))

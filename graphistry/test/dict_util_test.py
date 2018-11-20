@@ -1,5 +1,5 @@
 import pytest
-from graphistry import dict_util
+from graphistry.src import dict_util
 
 def test_assign():
     original = { 'a': 0, 'b': 0, 'c': 0         }

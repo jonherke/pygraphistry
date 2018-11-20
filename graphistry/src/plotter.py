@@ -2,8 +2,10 @@ import copy
 import pandas
 import pyarrow
 
-from graphistry import dict_util
-from graphistry import graph_util
+from graphistry.src import dict_util
+from graphistry.src import table_util
+from graphistry.src import graph_util
+from graphistry.src import graph_rectify
 
 class Plotter(object):
 
@@ -88,4 +90,26 @@ class Plotter(object):
         def plot(self):
             # verify bindings, convert data, and upload
             # - need src, dst, node columns
-            pass
+            (edges, nodes) = graph_rectify.rectify(
+                edges    = self._data['edges'],
+                nodes    = self._data['nodes'],
+                edge     = self._bindings['edge_id'],
+                node     = self._bindings['node_id'],
+                edge_src = self._bindings['edge_src'],
+                edge_dst = self._bindings['edge_dst'],
+                safe     = True
+            )
+
+            fields = {
+                binding: field for binding, field in _bindings.items() if field != None
+            }
+
+            parts = {
+                'nodes': ('nodes', toBuffer(nodes), 'application/octet-stream'),
+                'edges': ('edges', toBuffer(edges), 'application/octet-stream')
+            }
+
+            response = requests.post('http://nginx/datasets', files=parts, data=fields)
+            response.raise_for_status()
+            jres = response.json()
+            return "localhost/graph/%s" % (jres['revisionId'])

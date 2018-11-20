@@ -2,7 +2,7 @@ from ._version import get_versions
 __version__ = get_versions()['version']
 del get_versions
 
-from graphistry.plotter import Plotter
+from graphistry.src.plotter import Plotter
 
 def data(**data):
     return Plotter(data = data)

@@ -9,19 +9,17 @@ def rectify(
     edges: arrow.Table,
     nodes: arrow.Table,
     node: Union[str, int],
-    edge: Union[str, int],
     edge_src: Union[str, int],
     edge_dst: Union[str, int],
     safe: bool = True
 ) -> Tuple[arrow.Table, arrow.Table]:
     # make sure id columns are int32, which may require us to do one of the following:
-    # - convert from int64 to int32
+    # - down-cast from int64
     # - create index via node column and map src/dst/node to their corrosponding index (dType => int32) 
     # - dictionary encode the column (cant do this yet, as server doesn't support it)
+    (node,     node_column)     = _get_index_and_column(nodes, node)
     (edge_src, edge_src_column) = _get_index_and_column(edges, edge_src)
     (edge_dst, edge_dst_column) = _get_index_and_column(edges, edge_dst)
-    (node,     node_column)     = _get_index_and_column(nodes, node)
-    (edge,     edge_column)     = _get_index_and_column(nodes, node)
 
     _assert_column_types_match(node_column, edge_src_column)
     _assert_column_types_match(node_column, edge_dst_column)

@@ -90,10 +90,18 @@ class Plotter(object):
         def plot(self):
             # verify bindings, convert data, and upload
             # - need src, dst, node columns
-            (edges, nodes) = graph_rectify.rectify(
-                edges    = self._data['edges'],
-                nodes    = self._data['nodes'],
-                edge     = self._bindings['edge_id'],
+
+            edges = self._data['edges']
+            nodes = self._data['nodes']
+
+            edges = graph_rectify.rectify_edge_ids(
+                edges = edges, 
+                edge  = self._bindings['edge_id']
+            )
+
+            (edges, nodes) = graph_rectify.rectify_node_ids(
+                edges    = edges,
+                nodes    = nodes,
                 node     = self._bindings['node_id'],
                 edge_src = self._bindings['edge_src'],
                 edge_dst = self._bindings['edge_dst'],

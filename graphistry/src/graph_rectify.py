@@ -1,25 +1,61 @@
-from typing import Tuple, Union
-
+from typing import Tuple
 import pyarrow as arrow
 
 int32 = arrow.int32()
 int64 = arrow.int64()
 
-def rectify(
+def rectify_edge_ids(
+    edges: arrow.Table,
+    edge: str,
+    safe: bool = True
+) -> arrow.Table:
+
+    edge_column: arrow.Column
+    edge_column_id = edges.schema.get_field_index(edge)
+
+    if edge_column_id < 0:
+        edge_column = arrow.column(edge_column_id, [ range(edges.num_rows) ])
+        edge_column_id = edges.num_columns
+        return edges.append_column(edge_column)
+
+    edge_column = edges.column(edge_column_id)
+
+    if edge_column.type == int32:
+        return edges
+
+    if edge_column.type == int64:
+        return edges.set_column(
+            edge_column_id,
+            edge_column.cast(int32, safe = safe)
+        )
+
+    return edges.set_column(
+        edge_column_id,
+        arrow \
+            .column( edge_column.name, [ range(edges.num_rows) ]) \
+            .cast(int32, safe)
+    )
+
+
+def rectify_node_ids(
     edges: arrow.Table,
     nodes: arrow.Table,
-    node: Union[str, int],
-    edge_src: Union[str, int],
-    edge_dst: Union[str, int],
+    node: str,
+    edge_src: str,
+    edge_dst: str,
     safe: bool = True
 ) -> Tuple[arrow.Table, arrow.Table]:
     # make sure id columns are int32, which may require us to do one of the following:
     # - down-cast from int64
     # - create index via node column and map src/dst/node to their corrosponding index (dType => int32) 
     # - dictionary encode the column (cant do this yet, as server doesn't support it)
-    (node,     node_column)     = _get_index_and_column(nodes, node)
-    (edge_src, edge_src_column) = _get_index_and_column(edges, edge_src)
-    (edge_dst, edge_dst_column) = _get_index_and_column(edges, edge_dst)
+    node     = nodes.schema.get_field_index(node)
+    edge_src = edges.schema.get_field_index(edge_src)
+    edge_dst = edges.schema.get_field_index(edge_dst)
+    
+    node_column = nodes.column(node)
+    edge_src_column = edges.column(node)
+    edge_dst_column = edges.column(node)
 
     _assert_column_types_match(node_column, edge_src_column)
     _assert_column_types_match(node_column, edge_dst_column)
@@ -65,13 +101,6 @@ def _index_by_value(iterable):
 def _map_column_to_index(lookup, column: arrow.Column) -> arrow.Column: 
     indicies = [lookup[value] for value in column]
     return arrow.column(column.name, [indicies]).cast(int32, safe = False)
-
-
-def _get_index_and_column(table: arrow.Table, i) -> Tuple[int, arrow.Column]:
-    index = i if isinstance(i, int) else table.schema.get_field_index(i)
-    if index < 0:
-        raise Exception('column not found: %s' % i)
-    return (index, table.column(index))
 
 
 def _assert_column_types_match(expected: arrow.Column, actual: arrow.Column):

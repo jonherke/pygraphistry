@@ -31,9 +31,7 @@ def rectify_edge_ids(
 
     return edges.set_column(
         edge_column_id,
-        arrow \
-            .column( edge_column.name, [ range(edges.num_rows) ]) \
-            .cast(int32, safe)
+        arrow.column( edge_column.name, [ range(edges.num_rows) ]).cast(int32, safe = safe)
     )
 
 

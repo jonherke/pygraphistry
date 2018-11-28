@@ -1,6 +1,6 @@
 import requests
 
-from graphistry.src import arrow_util, dict_util, graph_rectify, graph_util, table_util
+from graphistry.src import util_arrow, util_dict, graph_rectify, util_graph
 
 class Plotter(object):
 
@@ -47,30 +47,30 @@ class Plotter(object):
 
         def data(self,  **data):
             if 'graph' in data:
-                (edges, nodes) = graph_util.decompose(data['graph'])
+                (edges, nodes) = util_graph.decompose(data['graph'])
                 return self.data(
                     edges = edges,
                     nodes = nodes
                 )
 
             if 'edges' in data:
-                data['edges'] = table_util.to_arrow(data['edges'])
+                data['edges'] = util_arrow.to_arrow_table(data['edges'])
 
             if 'nodes' in data:
-                data['nodes'] = table_util.to_arrow(data['nodes'])
+                data['nodes'] = util_arrow.to_arrow_table(data['nodes'])
 
             return Plotter(
-                data = dict_util.assign(self._data, data)
+                data = util_dict.assign(self._data, data)
             )
 
         def bind(self,  **bindings):
             return Plotter(
-                bindings = dict_util.assign(self._bindings, bindings)
+                bindings = util_dict.assign(self._bindings, bindings)
             )
 
         def settings(self, **settings):
             return Plotter(
-                settings = dict_util.assign(self._settings, settings)
+                settings = util_dict.assign(self._settings, settings)
             )
 
         def nodes(self, nodes):
@@ -98,8 +98,8 @@ class Plotter(object):
             response = requests.post(
                 'http://nginx/datasets',
                 files = {
-                    'nodes': ('nodes', arrow_util.table_to_buffer(nodes), 'application/octet-stream'),
-                    'edges': ('edges', arrow_util.table_to_buffer(edges), 'application/octet-stream')
+                    'nodes': ('nodes', util_arrow.table_to_buffer(nodes), 'application/octet-stream'),
+                    'edges': ('edges', util_arrow.table_to_buffer(edges), 'application/octet-stream')
                 },
                 data = {
                     binding: field for binding, field in self._bindings.items() if field != None

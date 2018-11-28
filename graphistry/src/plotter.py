@@ -1,6 +1,6 @@
 import requests
 
-from graphistry.src import dict_util, graph_rectify, graph_util, table_util
+from graphistry.src import arrow_util, dict_util, graph_rectify, graph_util, table_util
 
 class Plotter(object):
 
@@ -98,8 +98,8 @@ class Plotter(object):
             response = requests.post(
                 'http://nginx/datasets',
                 files = {
-                    'nodes': ('nodes', to_buffer(nodes), 'application/octet-stream'),
-                    'edges': ('edges', to_buffer(edges), 'application/octet-stream')
+                    'nodes': ('nodes', arrow_util.table_to_buffer(nodes), 'application/octet-stream'),
+                    'edges': ('edges', arrow_util.table_to_buffer(edges), 'application/octet-stream')
                 },
                 data = {
                     binding: field for binding, field in self._bindings.items() if field != None
@@ -115,10 +115,3 @@ class Plotter(object):
             jres = response.json()
 
             return "localhost/graph/%s" % (jres['revisionId'])
-
-# Consider where to move to_buffer
-def to_buffer(table):
-    sink = pa.BufferOutputStream()
-    writer = pa.RecordBatchStreamWriter(sink, table.schema)
-    writer.write_table(table)
-    return sink.getvalue()

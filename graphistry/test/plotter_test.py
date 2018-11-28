@@ -1,5 +1,7 @@
 import pytest
+
 from graphistry import Plotter
+
 
 def test_plot():
     pass

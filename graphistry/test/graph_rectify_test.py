@@ -1,7 +1,8 @@
-import pytest
-import pyarrow as arrow
-import string
 import random
+import string
+
+import pyarrow as arrow
+import pytest
 
 from graphistry.src import graph_rectify
 

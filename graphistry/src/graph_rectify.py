@@ -1,4 +1,5 @@
 from typing import Tuple
+
 import pyarrow as arrow
 
 int32 = arrow.int32()

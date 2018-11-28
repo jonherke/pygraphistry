@@ -1,11 +1,6 @@
-import copy
-import pandas
-import pyarrow
+import requests
 
-from graphistry.src import dict_util
-from graphistry.src import table_util
-from graphistry.src import graph_util
-from graphistry.src import graph_rectify
+from graphistry.src import dict_util, graph_rectify, graph_util, table_util
 
 class Plotter(object):
 
@@ -88,36 +83,42 @@ class Plotter(object):
             return self.data(graph = graph)
 
         def plot(self):
-            # verify bindings, convert data, and upload
-            # - need src, dst, node columns
+            # TODO(cwharris): verify required bindings
 
-            edges = self._data['edges']
-            nodes = self._data['nodes']
-
-            edges = graph_rectify.rectify_edge_ids(
-                edges = edges, 
-                edge  = self._bindings['edge_id']
-            )
-
-            (edges, nodes) = graph_rectify.rectify_node_ids(
-                edges    = edges,
-                nodes    = nodes,
+            (edges, nodes) = graph_rectify.rectify(
+                edges    = self._data['edges'],
+                nodes    = self._data['nodes'],
+                edge     = self._bindings['edge_id'],
                 node     = self._bindings['node_id'],
                 edge_src = self._bindings['edge_src'],
                 edge_dst = self._bindings['edge_dst'],
                 safe     = True
             )
 
-            fields = {
-                binding: field for binding, field in _bindings.items() if field != None
-            }
+            response = requests.post(
+                'http://nginx/datasets',
+                files = {
+                    'nodes': ('nodes', to_buffer(nodes), 'application/octet-stream'),
+                    'edges': ('edges', to_buffer(edges), 'application/octet-stream')
+                },
+                data = {
+                    binding: field for binding, field in self._bindings.items() if field != None
+                }
+            )
 
-            parts = {
-                'nodes': ('nodes', toBuffer(nodes), 'application/octet-stream'),
-                'edges': ('edges', toBuffer(edges), 'application/octet-stream')
-            }
+            # TODO(cwharris): investigate the response and present a friendly error message, if the server supports it.
 
-            response = requests.post('http://nginx/datasets', files=parts, data=fields)
             response.raise_for_status()
+
+            # TODO(cwharris): transform the response into the expected return type (URI, IPython HTML, etc).
+            
             jres = response.json()
+
             return "localhost/graph/%s" % (jres['revisionId'])
+
+# Consider where to move to_buffer
+def to_buffer(table):
+    sink = pa.BufferOutputStream()
+    writer = pa.RecordBatchStreamWriter(sink, table.schema)
+    writer.write_table(table)
+    return sink.getvalue()

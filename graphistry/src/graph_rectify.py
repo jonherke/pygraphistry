@@ -4,6 +4,28 @@ import pyarrow as arrow
 int32 = arrow.int32()
 int64 = arrow.int64()
 
+def rectify(
+    edges: arrow.Table,
+    nodes: arrow.Table,
+    edge: str,
+    node: str,
+    edge_src: str,
+    edge_dst: str,
+    safe: bool = True
+) -> Tuple[arrow.Table, arrow.Table]:
+    return rectify_node_ids(
+        edges = rectify_edge_ids(
+            edges = edges,
+            edge = edge,
+            safe = safe
+        ),
+        nodes = nodes,
+        node = node,
+        edge_src = edge_src,
+        edge_dst = edge_dst,
+        safe = safe
+    )
+
 def rectify_edge_ids(
     edges: arrow.Table,
     edge: str,

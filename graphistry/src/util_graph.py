@@ -1,10 +1,12 @@
 import pyarrow
 
+
 def decompose(graph):
-    for decomposer in [ decompose_igraph, decompose_networkx ]:
+    for decomposer in [decompose_igraph, decompose_networkx]:
         try:
             decomposition = decomposer(graph)
-            if decomposition == None: continue
+            if decomposition is None:
+                continue
             return decomposition
         except ImportError:
             continue

@@ -11,7 +11,7 @@ def table_to_buffer(table: arrow.Table) -> arrow.Buffer:
 
 
 def to_arrow(source):
-    if source == None:
+    if source is None:
         return None
 
     if isinstance(source, arrow.Table):

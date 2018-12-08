@@ -35,15 +35,14 @@ def rectify_edge_ids(
     safe: bool = True
 ) -> arrow.Table:
 
-    edge_column
+    edge_column = None
     edge_column_id = edges.schema.get_field_index(edge)
 
     if edge_column_id < 0:
-        edge_column = arrow.column(edge_column_id, [range(edges.num_rows)])
-        edge_column_id = edges.num_columns
+        edge_column = arrow.column(edge, [[x for x in range(edges.num_rows)]]).cast(int32)
         return edges.append_column(edge_column)
-
-    edge_column = edges.column(edge_column_id)
+    else:
+        edge_column = edges.column(edge_column_id)
 
     if edge_column.type == int32:
         return edges
@@ -85,11 +84,11 @@ def rectify_node_ids(
     _assert_column_types_match(node_column, edge_dst_column)
 
     # already good to go.
-    if node_column.type == arrow.int32:
+    if node_column.type == int32:
         return (edges, nodes)
 
     # convert int64 => int32 if no overflow.
-    if node_column.type == arrow.int64:
+    if node_column.type == int64:
         edges = edges \
             .set_column(edge_src, edge_src_column.cast(int32, safe=safe)) \
             .set_column(edge_dst, edge_dst_column.cast(int32, safe=safe))

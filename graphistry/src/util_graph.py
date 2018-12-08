@@ -1,6 +1,5 @@
 import pyarrow
 
-
 def decompose(graph):
     for decomposer in [decompose_igraph, decompose_networkx]:
         try:
@@ -15,14 +14,10 @@ def decompose(graph):
 
 
 def decompose_igraph(graph):
-    import igraph
-    if not isinstance(graph, igraph.Graph):
-        return None
-    raise NotImplementedError()
+    from graphistry.src import util_graph_igraph
+    return util_graph_igraph.to_arrow(graph)
 
 
 def decompose_networkx(graph):
-    import networkx
-    if not isinstance(graph, networkx.Graph):
-        return None
-    raise NotImplementedError()
+    from graphistry.src import util_graph_networkx
+    return util_graph_networkx.to_arrow(graph)

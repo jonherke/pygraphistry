@@ -14,14 +14,28 @@ letters_column_name = 'letters'
 
 def test_rectify_edge_ids_int64():
     edge_table = _create_simple_table()
-    edge_table = graph_rectify.rectify_edge_ids(edge_table, id_column_name)
+    edge_table = graph_rectify.rectify_edge_ids(
+        edge_table,
+        id_column_name
+    )
     assert edge_table.column(id_column_name).type == int32
 
 
 def test_rectify_edge_ids_string():
     edge_table = _create_simple_table()
     edge_table = graph_rectify.rectify_edge_ids(
-        edge_table, letters_column_name)
+        edge_table,
+        letters_column_name
+    )
+    assert edge_table.column(letters_column_name).type == int32
+
+
+def test_rectify_edge_ids_missing():
+    edge_table = _create_simple_table()
+    edge_table = graph_rectify.rectify_edge_ids(
+        edge_table,
+        'letter'
+    )
     assert edge_table.column(letters_column_name).type == int32
 
 

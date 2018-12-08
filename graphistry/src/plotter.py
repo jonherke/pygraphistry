@@ -2,6 +2,10 @@ import requests
 
 from graphistry.src import util_arrow, util_dict, graph_rectify, util_graph
 
+NODE_ID  = '__node_id__'
+EDGE_ID  = '__edge_id__'
+EDGE_SRC = '__edge_src__'
+EDGE_DST = '__edge_dst__'
 
 class Plotter(object):
 
@@ -38,13 +42,17 @@ class Plotter(object):
 
     def __init__(
         self,
+        base=None,
         data=None,
         bindings=None,
         settings=None
     ):
-        self._data = data or self._data
-        self._bindings = bindings or self._bindings
-        self._settings = settings or self._settings
+        if base is None:
+            base = self
+
+        self._data     = data     or base._data     or self._data
+        self._bindings = bindings or base._bindings or self._bindings
+        self._settings = settings or base._settings or self._settings
 
     def data(self,  **data):
         if 'graph' in data:
@@ -55,22 +63,25 @@ class Plotter(object):
             )
 
         if 'edges' in data:
-            data['edges'] = util_arrow.to_arrow_table(data['edges'])
+            data['edges'] = util_arrow.to_arrow(data['edges'])
 
         if 'nodes' in data:
-            data['nodes'] = util_arrow.to_arrow_table(data['nodes'])
+            data['nodes'] = util_arrow.to_arrow(data['nodes'])
 
         return Plotter(
+            self,
             data=util_dict.assign(self._data, data)
         )
 
     def bind(self,  **bindings):
         return Plotter(
+            self,
             bindings=util_dict.assign(self._bindings, bindings)
         )
 
     def settings(self, **settings):
         return Plotter(
+            self,
             settings=util_dict.assign(self._settings, settings)
         )
 
@@ -96,17 +107,25 @@ class Plotter(object):
             safe=True
         )
 
+        nodeBuffer = util_arrow.table_to_buffer(nodes)
+        edgeBuffer = util_arrow.table_to_buffer(edges)
+
+        import pyarrow as arrow
+
+        a = arrow.open_stream(nodeBuffer)
+        b = arrow.open_stream(edgeBuffer)
+
         response = requests.post(
-            'http://nginx/datasets',
+            'http://localhost/datasets',
             files={
                 'nodes': (
                     'nodes',
-                    util_arrow.table_to_buffer(nodes),
+                    nodeBuffer,
                     'application/octet-stream'
                 ),
                 'edges': (
                     'edges',
-                    util_arrow.table_to_buffer(edges),
+                    edgeBuffer,
                     'application/octet-stream'
                 )
             },

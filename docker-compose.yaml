@@ -1,0 +1,13 @@
+version: '3'
+services:
+  jupyter:
+    image: graphistry/jupyter-notebook
+    volumes:
+      - $PWD:/home/jovyan/
+    environment:
+      - JUPYTER_TOKEN=graphtheplanet
+networks:
+  default:
+    external:
+      name: compose_grph_net
+    

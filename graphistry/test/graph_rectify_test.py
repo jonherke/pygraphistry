@@ -31,12 +31,13 @@ def test_rectify_edge_ids_string():
 
 
 def test_rectify_edge_ids_missing():
+    missing_column_name = '(missing)'
     edge_table = _create_simple_table()
     edge_table = graph_rectify.rectify_edge_ids(
         edge_table,
-        'letter'
+        missing_column_name
     )
-    assert edge_table.column(letters_column_name).type == int32
+    assert edge_table.column(missing_column_name).type == int32
 
 
 def test_rectify_node_ids():

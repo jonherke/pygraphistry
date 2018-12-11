@@ -1,0 +1,8 @@
+name: pygraphistry3.7
+dependencies:
+  - mypy=0.641=py37_0
+  - pytest=4.0.1=py37_0
+  - networkx=2.2=py37_1
+  - requests=2.20.1=py37_0
+  - pandas=0.23.4=py37h04863e7_0
+  - pyarrow=0.11.1=py37he6710b0_0

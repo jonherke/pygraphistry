@@ -116,7 +116,7 @@ class Plotter(object):
         b = arrow.open_stream(edgeBuffer)
 
         response = requests.post(
-            'http://localhost/datasets',
+            'http://streamgl-datasets/datasets',
             files={
                 'nodes': (
                     'nodes',

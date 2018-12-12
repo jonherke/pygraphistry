@@ -1,3 +1,5 @@
+include ./.env
+
 chown:
 	sudo chown -R $(shell whoami) .
 

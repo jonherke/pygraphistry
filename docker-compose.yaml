@@ -1,7 +1,9 @@
 version: '3'
 services:
   jupyter:
-    image: graphistry/jupyter-notebook
+    build:
+      context: .
+      dockerfile: jupyter.Dockerfile
     volumes:
       - $PWD:/home/jovyan/
     environment:

@@ -1,4 +1,5 @@
 import requests
+import os
 
 from graphistry.src import util_arrow, util_dict, graph_rectify, util_graph
 
@@ -34,6 +35,21 @@ class Plotter(object):
         'edge_label': None,
         'edge_color': None,
         'edge_weight': None,
+    }
+
+    _bindings_map = {
+        'node_id':     'nodeId',
+        'edge_id':     'edgeId',
+        'edge_src':    'source',
+        'edge_dst':    'destination',
+        'edge_color':  'edgeColor',
+        'edge_label':  'edgeLabel',
+        'edge_title':  'edgeTitle',
+        'edge_weight': 'edgeWeight',
+        'node_color':  'pointColor',
+        'node_label':  'pointLabel',
+        'node_title':  'pointTitle',
+        'node_size':   'pointSize'
     }
 
     _settings = {
@@ -115,17 +131,22 @@ class Plotter(object):
         a = arrow.open_stream(nodeBuffer)
         b = arrow.open_stream(edgeBuffer)
 
+        files = {
+            'nodes': ('nodes', nodeBuffer, 'application/octet-stream'),
+            'edges': ('edges', edgeBuffer, 'application/octet-stream')
+        }
+
+        data = {
+            self._bindings_map[binding]: item
+            for binding, item in self._bindings.items()
+            if item is not None
+        }
+        
         response = requests.post(
-            'http://streamgl-datasets/datasets',
-            files={
-                'nodes': ('nodes', nodeBuffer, 'application/octet-stream'),
-                'edges': ('edges', edgeBuffer, 'application/octet-stream')
-            },
-            data={
-                binding: item
-                for binding, item in self._bindings.items()
-                if item is not None
-            }
+            # 'http://streamgl-datasets/datasets', # TODO(cwharris): configurable via env + graphistry.register(...) 'GRAPHISTRY_HOSTNAME'
+            'http://localhost/datasets',
+            files=files,
+            data=data
         )
 
         # TODO(cwharris): Try to present a friendly error message.

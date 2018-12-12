@@ -77,8 +77,8 @@ def rectify_node_ids(
     edge_dst = edges.schema.get_field_index(edge_dst)
 
     node_column = nodes.column(node)
-    edge_src_column = edges.column(node)
-    edge_dst_column = edges.column(node)
+    edge_src_column = edges.column(edge_src)
+    edge_dst_column = edges.column(edge_dst)
 
     _assert_column_types_match(node_column, edge_src_column)
     _assert_column_types_match(node_column, edge_dst_column)

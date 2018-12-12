@@ -1,0 +1,26 @@
+version: '3'
+services:
+  jupyter:
+    image: pygraphistry-jupyter
+    build:
+      dockerfile: ./compose/jupyter.Dockerfile
+      context: ..
+    volumes:
+      - ../graphistry/:/opt/graphistry
+      - ../demos/:/home/jovyan/demos
+    environment:
+      - JUPYTER_TOKEN=graphistry
+    ports:
+      - 8888:8888
+  test:
+    image: pygraphistry-test
+    build:
+      dockerfile: ./compose/test.Dockerfile
+      context: ..
+    volumes:
+      - ../graphistry:/opt/graphistry
+networks:
+  default:
+    external:
+      name: compose_grph_net
+    

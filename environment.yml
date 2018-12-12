@@ -1,4 +1,4 @@
-name: pygraphistry-test
+name: graphistry
 dependencies:
   - python=3.7
   - mypy=0.641

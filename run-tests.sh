@@ -1,3 +1,3 @@
-source activate pygraphistry-test
+source activate pygraphistry
 cd /pygraphistry
 pytest

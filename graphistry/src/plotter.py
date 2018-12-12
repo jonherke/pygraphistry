@@ -118,16 +118,8 @@ class Plotter(object):
         response = requests.post(
             'http://streamgl-datasets/datasets',
             files={
-                'nodes': (
-                    'nodes',
-                    nodeBuffer,
-                    'application/octet-stream'
-                ),
-                'edges': (
-                    'edges',
-                    edgeBuffer,
-                    'application/octet-stream'
-                )
+                'nodes': ('nodes', nodeBuffer, 'application/octet-stream'),
+                'edges': ('edges', edgeBuffer, 'application/octet-stream')
             },
             data={
                 binding: item

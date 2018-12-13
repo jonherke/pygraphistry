@@ -3,12 +3,11 @@ import os
 
 
 def decompose(graph):
-    for decomposer in [_decompose_igraph, _decompose_networkx]:
+    for decompose in [_decompose_igraph, _decompose_networkx]:
         try:
-            decomposition = decomposer(graph)
-            if decomposition is None:
-                continue
-            return decomposition
+            decomposition = decompose(graph)
+            if decomposition is not None:
+                return decomposition
         except ImportError:
             continue
 

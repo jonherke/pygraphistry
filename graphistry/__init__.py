@@ -13,5 +13,3 @@ def bind(**bindings):
 
 def settings(**settings):
     return Plotter().settings(**settings)
-
-_zoopity = 5

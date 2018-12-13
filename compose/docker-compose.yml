@@ -18,7 +18,7 @@ services:
       dockerfile: ./compose/test.Dockerfile
       context: ..
     volumes:
-      - ../graphistry:/opt/graphistry
+      - ..:/opt/pygraphistry
 networks:
   default:
     external:

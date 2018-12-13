@@ -8,7 +8,7 @@ chown:
 
 test: chown
 	docker-compose -f $(COMPOSE_FILE) build test
-	docker-compose -f $(COMPOSE_FILE) run --rm test bash -c "/pygraphistry/run-tests.sh"
+	docker-compose -f $(COMPOSE_FILE) run --rm test bash -c "/opt/pygraphistry/run-tests.sh"
 
 jupyter: chown
 	docker-compose -f $(COMPOSE_FILE) build jupyter

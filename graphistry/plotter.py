@@ -53,7 +53,7 @@ class Plotter(object):
     }
 
     _settings = {
-        'height': 100
+        'height': 600
     }
 
     def __init__(
@@ -157,4 +157,30 @@ class Plotter(object):
 
         jres = response.json()
 
-        return "localhost/graph/%s" % (jres['revisionId'])
+        from IPython.core.display import HTML
+        return HTML(
+            _make_iframe("http://localhost/graph/%s" % (jres['revisionId']), self._settings['height'])
+        )
+
+
+def _make_iframe(raw_url, height):
+    import uuid
+    id = uuid.uuid4()
+
+    scrollbug_workaround='''
+            <script>
+                $("#%s").bind('mousewheel', function(e) {
+                e.preventDefault();
+                });
+            </script>
+        ''' % id
+
+    iframe = '''
+            <iframe id="%s" src="%s"
+                    allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"
+                    oallowfullscreen="true" msallowfullscreen="true"
+                    style="width:100%%; height:%dpx; border: 1px solid #DDD">
+            </iframe>
+        ''' % (id, raw_url, height)
+
+    return iframe + scrollbug_workaround

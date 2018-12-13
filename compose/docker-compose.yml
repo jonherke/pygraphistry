@@ -6,7 +6,7 @@ services:
       dockerfile: ./compose/jupyter.Dockerfile
       context: ..
     volumes:
-      - ../graphistry/:/opt/graphistry
+      - ..:/opt/pygraphistry
       - ../demos/:/home/jovyan/demos
     environment:
       - JUPYTER_TOKEN=graphistry

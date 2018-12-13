@@ -7,13 +7,13 @@ chown:
 	sudo chown -R $(shell whoami) .
 
 test: chown
-	docker-compose -f $(COMPOSE_FILE) build
+	docker-compose -f $(COMPOSE_FILE) build test
 	docker-compose -f $(COMPOSE_FILE) run --rm test bash -c "/pygraphistry/run-tests.sh"
 
 jupyter: chown
-	docker-compose -f $(COMPOSE_FILE) build
-	docker-compose -f $(COMPOSE_FILE) up jupyter
-	docker-compose -f $(COMPOSE_FILE) exec jupyter bash -c 'source activate graphistry ; pip install -e /opt/graphistry-environment.yml'
+	docker-compose -f $(COMPOSE_FILE) build jupyter
+	docker-compose -f $(COMPOSE_FILE) up -d --force-recreate jupyter 
+	docker-compose -f $(COMPOSE_FILE) exec jupyter bash -c 'source activate graphistry ; pip install -e /opt/pygraphistry'
 
 echo:
 	echo $(CURDIR)

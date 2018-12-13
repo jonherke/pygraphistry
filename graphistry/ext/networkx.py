@@ -1,7 +1,9 @@
 import pyarrow
 import networkx
 import itertools
-from graphistry.src.plotter import EDGE_SRC, EDGE_DST, NODE_ID
+
+from graphistry.plotter import EDGE_SRC, EDGE_DST, NODE_ID
+
 
 def to_arrow(graph):
     return None if not isinstance(graph, networkx.Graph) else (

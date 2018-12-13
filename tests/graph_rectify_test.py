@@ -4,7 +4,7 @@ import string
 import pyarrow as arrow
 import pytest
 
-from graphistry.src import graph_rectify
+from graphistry.util.graph.rectify import rectify, _rectify_edge_ids, _rectify_node_ids
 
 int32 = arrow.int32()
 
@@ -14,7 +14,7 @@ letters_column_name = 'letters'
 
 def test_rectify_edge_ids_int64():
     edge_table = _create_simple_table()
-    edge_table = graph_rectify.rectify_edge_ids(
+    edge_table = _rectify_edge_ids(
         edge_table,
         id_column_name
     )
@@ -23,7 +23,7 @@ def test_rectify_edge_ids_int64():
 
 def test_rectify_edge_ids_string():
     edge_table = _create_simple_table()
-    edge_table = graph_rectify.rectify_edge_ids(
+    edge_table = _rectify_edge_ids(
         edge_table,
         letters_column_name
     )
@@ -33,7 +33,7 @@ def test_rectify_edge_ids_string():
 def test_rectify_edge_ids_missing():
     missing_column_name = '(missing)'
     edge_table = _create_simple_table()
-    edge_table = graph_rectify.rectify_edge_ids(
+    edge_table = _rectify_edge_ids(
         edge_table,
         missing_column_name
     )

@@ -23,4 +23,3 @@ networks:
   default:
     external:
       name: compose_grph_net
-    

@@ -1,4 +1,4 @@
-from graphistry.src.plotter import Plotter
+from graphistry.plotter import Plotter
 from ._version import get_versions
 __version__ = get_versions()['version']
 del get_versions

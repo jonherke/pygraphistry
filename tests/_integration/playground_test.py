@@ -8,10 +8,10 @@ def test_plot():
     uri = graphistry\
         .data(graph=graph)\
         .bind(
-            node_id = graphistry.src.plotter.NODE_ID,
-            edge_id = graphistry.src.plotter.EDGE_ID,
-            edge_src = graphistry.src.plotter.EDGE_SRC,
-            edge_dst = graphistry.src.plotter.EDGE_DST
+            node_id = graphistry.plotter.NODE_ID,
+            edge_id = graphistry.plotter.EDGE_ID,
+            edge_src = graphistry.plotter.EDGE_SRC,
+            edge_dst = graphistry.plotter.EDGE_DST
         )\
         .plot()
     print(uri)

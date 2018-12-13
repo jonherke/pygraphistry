@@ -1,7 +1,7 @@
 import requests
 import os
 
-from graphistry.src import util_arrow, util_dict, graph_rectify, util_graph
+from graphistry.util import arrow_util, dict_util, graph as graph_util
 
 NODE_ID  = '__node_id__'
 EDGE_ID  = '__edge_id__'
@@ -72,33 +72,33 @@ class Plotter(object):
 
     def data(self,  **data):
         if 'graph' in data:
-            (edges, nodes) = util_graph.decompose(data['graph'])
+            (edges, nodes) = graph_util.decompose(data['graph'])
             return self.data(
                 edges=edges,
                 nodes=nodes
             )
 
         if 'edges' in data:
-            data['edges'] = util_arrow.to_arrow(data['edges'])
+            data['edges'] = arrow_util.to_arrow(data['edges'])
 
         if 'nodes' in data:
-            data['nodes'] = util_arrow.to_arrow(data['nodes'])
+            data['nodes'] = arrow_util.to_arrow(data['nodes'])
 
         return Plotter(
             self,
-            data=util_dict.assign(self._data, data)
+            data=dict_util.assign(self._data, data)
         )
 
     def bind(self,  **bindings):
         return Plotter(
             self,
-            bindings=util_dict.assign(self._bindings, bindings)
+            bindings=dict_util.assign(self._bindings, bindings)
         )
 
     def settings(self, **settings):
         return Plotter(
             self,
-            settings=util_dict.assign(self._settings, settings)
+            settings=dict_util.assign(self._settings, settings)
         )
 
     def nodes(self, nodes):
@@ -113,7 +113,7 @@ class Plotter(object):
     def plot(self):
         # TODO(cwharris): verify required bindings
 
-        (edges, nodes) = graph_rectify.rectify(
+        (edges, nodes) = graph_util.rectify(
             edges=self._data['edges'],
             nodes=self._data['nodes'],
             edge=self._bindings['edge_id'],
@@ -123,8 +123,8 @@ class Plotter(object):
             safe=True
         )
 
-        nodeBuffer = util_arrow.table_to_buffer(nodes)
-        edgeBuffer = util_arrow.table_to_buffer(edges)
+        nodeBuffer = arrow_util.table_to_buffer(nodes)
+        edgeBuffer = arrow_util.table_to_buffer(edges)
 
         import pyarrow as arrow
 

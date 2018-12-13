@@ -2,6 +2,7 @@ from typing import Tuple
 
 import pyarrow as arrow
 
+
 int32 = arrow.int32()
 int64 = arrow.int64()
 
@@ -15,8 +16,8 @@ def rectify(
     edge_dst: str,
     safe: bool = True
 ) -> Tuple[arrow.Table, arrow.Table]:
-    return rectify_node_ids(
-        edges=rectify_edge_ids(
+    return _rectify_node_ids(
+        edges=_rectify_edge_ids(
             edges=edges,
             edge=edge,
             safe=safe
@@ -29,7 +30,7 @@ def rectify(
     )
 
 
-def rectify_edge_ids(
+def _rectify_edge_ids(
     edges: arrow.Table,
     edge: str,
     safe: bool = True
@@ -60,7 +61,7 @@ def rectify_edge_ids(
     )
 
 
-def rectify_node_ids(
+def _rectify_node_ids(
     edges: arrow.Table,
     nodes: arrow.Table,
     node: str,

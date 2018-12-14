@@ -8,12 +8,11 @@ chown:
 
 test: chown
 	docker-compose -f $(COMPOSE_FILE) build test
-	docker-compose -f $(COMPOSE_FILE) run --rm test bash -c "/opt/pygraphistry/run-tests.sh"
+	docker-compose -f $(COMPOSE_FILE) run test
 
 jupyter: chown
 	docker-compose -f $(COMPOSE_FILE) build jupyter
-	docker-compose -f $(COMPOSE_FILE) up -d --force-recreate jupyter 
-	docker-compose -f $(COMPOSE_FILE) exec jupyter bash -c 'source activate graphistry ; pip install -e /opt/pygraphistry'
+	docker-compose -f $(COMPOSE_FILE) up jupyter
 
 echo:
 	echo $(CURDIR)

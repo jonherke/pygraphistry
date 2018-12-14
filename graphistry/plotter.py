@@ -146,7 +146,8 @@ class Plotter(object):
             'http://streamgl-datasets/datasets', # TODO(cwharris): configurable via env + graphistry.register(...) 'GRAPHISTRY_HOSTNAME'
             # 'http://localhost/datasets',
             files=files,
-            data=data
+            data=data,
+            timeout=(10, None) # TODO(cwharris): make 'connection' timeout configurable... maybe the 'read' timeout, too.
         )
 
         # TODO(cwharris): Try to present a friendly error message.

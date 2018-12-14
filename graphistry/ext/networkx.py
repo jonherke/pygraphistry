@@ -2,10 +2,16 @@ import pyarrow
 import networkx
 import itertools
 
-from graphistry.plotter import EDGE_SRC, EDGE_DST, NODE_ID
+from graphistry.plotter import NODE_ID, EDGE_ID, EDGE_SRC, EDGE_DST
 
 
-def to_arrow(graph):
+def to_arrow(
+    graph
+    # node_id_column_name=NODE_ID,
+    # edge_id_column_name=EDGE_ID,
+    # edge_src_column_name=EDGE_SRC,
+    # edge_dst_column_name=EDGE_DST
+):
     return None if not isinstance(graph, networkx.Graph) else (
         pyarrow.Table.from_arrays([column for column in _edge_columns(graph)]),
         pyarrow.Table.from_arrays([column for column in _node_columns(graph)])

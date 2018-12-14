@@ -15,7 +15,7 @@ def rectify(
     edge_src: str,
     edge_dst: str,
     safe: bool = True
-) -> Tuple[arrow.Table, arrow.Table]:
+):
     return _rectify_node_ids(
         edges=_rectify_edge_ids(
             edges=edges,
@@ -34,7 +34,7 @@ def _rectify_edge_ids(
     edges: arrow.Table,
     edge: str,
     safe: bool = True
-) -> arrow.Table:
+):
 
     edge_column = None
     edge_column_id = edges.schema.get_field_index(edge)
@@ -68,7 +68,7 @@ def _rectify_node_ids(
     edge_src: str,
     edge_dst: str,
     safe: bool = True
-) -> Tuple[arrow.Table, arrow.Table]:
+):
     # make sure id columns are int32, which may require one of the following:
     # - down-cast from int64
     # - create index via node column and map src/dst/node to an index.

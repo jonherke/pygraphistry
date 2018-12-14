@@ -11,7 +11,7 @@ def decompose(graph):
         except ImportError:
             continue
 
-    raise NotImplementedError()
+    raise TypeError("Unsupported Graph: %s" % (type(graph)))
 
 
 def _decompose_igraph(graph):

@@ -20,7 +20,11 @@ services:
       dockerfile: ./compose/test.Dockerfile
       context: ..
     volumes:
-      - ..:/opt/pygraphistry
+      - ../.conda/envs/:/opt/conda/envs
+      - ../.conda/pkgs/:/opt/conda/pkgs
+      - ../:/opt/pygraphistry
+    environment:
+      - PY_IGNORE_IMPORTMISMATCH=1
 networks:
   default:
     external:

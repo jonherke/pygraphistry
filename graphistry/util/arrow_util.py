@@ -21,3 +21,4 @@ def to_arrow(source):
         return arrow.Table.from_pandas(source)
 
     raise Exception('unsupported data source type: %s' % type(source))
+

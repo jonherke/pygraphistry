@@ -7,3 +7,6 @@ test:
 
 jupyter:
 	docker-compose -f $(COMPOSE_FILE) up jupyter
+
+neo4j:
+	docker-compose -f $(COMPOSE_FILE) run neo4j bash

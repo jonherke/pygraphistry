@@ -12,3 +12,5 @@ dependencies:
   - pyarrow=0.11.1
   - ipykernel=5.1.0
   - python-igraph=0.7.1.post6
+  - pip:
+    - neo4j==1.7.1

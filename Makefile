@@ -9,4 +9,5 @@ jupyter:
 	docker-compose -f $(COMPOSE_FILE) up jupyter
 
 neo4j:
+	docker-compose -f $(COMPOSE_FILE) build --no-cache neo4j
 	docker-compose -f $(COMPOSE_FILE) up neo4j

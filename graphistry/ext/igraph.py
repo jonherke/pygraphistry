@@ -12,6 +12,9 @@ def to_arrow( # TODO(cwharris): move these consts out of here
     edge_src_column_name=EDGE_SRC,
     edge_dst_column_name=EDGE_DST
 ):
+    if not isinstance(graph, igraph.Graph):
+        return None
+
     nodes: arrow.Table = arrow.Table.from_arrays(
         [column for column in itertools.chain(
             _id_columns(graph.vs, node_id_column_name),

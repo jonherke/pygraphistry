@@ -3,7 +3,7 @@ import os
 
 
 def decompose(graph):
-    for decompose in [_decompose_igraph, _decompose_networkx]:
+    for decompose in [_decompose_igraph, _decompose_networkx, _decompose_neo4j]:
         try:
             decomposition = decompose(graph)
             if decomposition is not None:
@@ -21,4 +21,8 @@ def _decompose_igraph(graph):
 
 def _decompose_networkx(graph):
     from graphistry.ext.networkx import to_arrow
+    return to_arrow(graph)
+
+def _decompose_neo4j(graph):
+    from graphistry.ext.neo4j import to_arrow
     return to_arrow(graph)

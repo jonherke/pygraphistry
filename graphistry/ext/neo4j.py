@@ -53,16 +53,18 @@ def _attributes_for_entities(entities):
 #         ])
 
 def _intrinsic_edge_columns(relationships):
+    # TODO(cwharris): remove the string conversion once server can haandle non-ascending integers.
+    # currently, ids will be remapped as part of pre-plot rectification.
     yield arrow.column(EDGE_ID, [
-        [relationship.id for relationship in relationships]
+        [str(relationship.id) for relationship in relationships]
     ])
 
     yield arrow.column(EDGE_SRC, [
-        [relationship.start_node.id for relationship in relationships]
+        [str(relationship.start_node.id) for relationship in relationships]
     ])
 
     yield arrow.column(EDGE_DST, [
-        [relationship.end_node.id for relationship in relationships]
+        [str(relationship.end_node.id) for relationship in relationships]
     ])
 
     # yield arrow.column("__neo4j_type__", [
@@ -70,6 +72,8 @@ def _intrinsic_edge_columns(relationships):
     # ])
 
 def _intrinsic_node_columns(nodes):
+    # TODO(cwharris): remove the string conversion once server can haandle non-ascending integers.
+    # currently, ids will be remapped as part of pre-plot rectification.
     yield arrow.column(NODE_ID, [
-        [node.id for node in nodes]
+        [str(node.id) for node in nodes]
     ])

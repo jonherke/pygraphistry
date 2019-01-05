@@ -29,6 +29,8 @@ services:
     build:
       dockerfile: ./compose/test.Dockerfile
       context: ..
+    depends_on:
+      - neo4j
     volumes:
       - ../.conda/envs/:/opt/conda/envs
       - ../.conda/pkgs/:/opt/conda/pkgs

@@ -6,8 +6,8 @@ services:
       dockerfile: ./compose/jupyter.Dockerfile
       context: ..
     volumes:
-      - ../.conda/envs/:/opt/conda/envs
-      - ../.conda/pkgs/:/opt/conda/pkgs
+      # - ../.conda/envs/:/opt/conda/envs
+      # - ../.conda/pkgs/:/opt/conda/pkgs
       - ../:/opt/pygraphistry
       - ../demos/:/home/jovyan/demos
     environment:

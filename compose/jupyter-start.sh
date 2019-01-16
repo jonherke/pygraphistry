@@ -1,6 +1,6 @@
 #!/bin/bash
 
-conda env update --file /opt/pygraphistry/environment.yml
+# conda env update --file /opt/pygraphistry/environment.yml
 
 source activate graphistry
 

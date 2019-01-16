@@ -160,7 +160,7 @@ class Plotter(object):
 
         from IPython.core.display import HTML
         return HTML(
-            _make_iframe("http://localhost/graph/%s" % (jres['revisionId']), self._settings['height'])
+            _make_iframe("http://localhost/graph/graph.html?dataset=%s" % (jres['revisionId']), self._settings['height'])
         )
 
 

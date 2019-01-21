@@ -1,6 +1,6 @@
 name: graphistry
 channels:
-  - conda-forge
+  - conda-forge/label/cf201901
 dependencies:
   - python=3.7
   - mypy=0.641

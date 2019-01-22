@@ -53,6 +53,11 @@ class Plotter(object):
     }
 
     _settings = {
+        "protocol": "https",
+        "server": "labs.graphistry.com",
+        "key": None,
+        'certificate_validation': None,
+        "bolt": None,
         'height': 600
     }
 
@@ -141,10 +146,11 @@ class Plotter(object):
             for binding, item in self._bindings.items()
             if item is not None
         }
+
+        graphistry_uri = f"{self._settings['protocol']}://{self._settings['server']}"
         
         response = requests.post(
-            'http://nginx/datasets', # TODO(cwharris): configurable via env + graphistry.register(...) 'GRAPHISTRY_HOSTNAME'
-            # 'http://localhost/datasets',
+            f'{graphistry_uri}/datasets' ,
             files=files,
             data=data,
             timeout=(10, None) # TODO(cwharris): make 'connection' timeout configurable... maybe the 'read' timeout, too.
@@ -159,8 +165,9 @@ class Plotter(object):
         jres = response.json()
 
         from IPython.core.display import HTML
+
         return HTML(
-            _make_iframe("http://localhost/graph/graph.html?dataset=%s" % (jres['revisionId']), self._settings['height'])
+            _make_iframe(f"{graphistry_uri}/graph/graph.html?dataset={jres['revisionId']}", self._settings['height'])
         )
 
 
